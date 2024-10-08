@@ -1,11 +1,7 @@
 const petButtonShow = () => {
     fetch(' https://openapi.programming-hero.com/api/peddy/categories')
         .then(res => res.json())
-        .then(data => 
-            // const 
-            
-            showButton(data.categories)
-            // workToPetButton(data.categories)
+        .then(data => showButton(data.categories)
             
         )
 }
@@ -124,7 +120,7 @@ const showpetAll = (pet) => {
         <div class="divider"></div>
         <div class="flex justify-between">
         <button onclick="clickLikeButton(${item.petId})"" class="btn border bg-white rounded-lg"><img src="./images/like.png" alt=""></button>
-        <button onclick="adoptButton(${item.petId})" class="btn border bg-white rounded-lg">adopt</button>
+        <button id="adopt${item.petId}" onclick="adoptButton(${item.petId})" class="btn border bg-white rounded-lg adapt-disable">adopt</button>
         <button onclick="detailsModal(${item.petId})" class="btn border bg-white rounded-lg">details</button>
         </div>
     </div>
@@ -153,9 +149,42 @@ const adoptButton = async(some) => {
     const res = await fetch(`https://openapi.programming-hero.com/api/peddy/pet/${some}`)
     const datas = await res.json();
     const data = datas.petData;
-    setTimeout(() => {
+    let coundoun = 4;
+    // const adoptmainbtn = document.getElementById('adopt-button')
+    const adoptModalShow = document.getElementById('modal-adopt');
+    
+    adoptModalShow.innerHTML = `
+    <dialog id="my_modal_1" class="modal">
+      <div class="modal-box">
+        <h3 class="text-lg font-bold">Hello!</h3>
+        <p class="py-4">Press ESC key or click the button below to close</p>
+        <div id="coundoun"></div>
+        <div class="modal-action">
+          <form method="dialog">
+            <!-- if there is a button in form, it will close the modal -->
+            <button class="btn hidden close">Close</button>
+          </form>
+        </div>
+      </div>
+    </dialog>
+    `
+    const coundouning =setInterval(() => {
+        coundoun = coundoun - 1
+        const coundounApp = document.getElementById('coundoun');
+        coundounApp.innerHTML = `
+        <h1>${coundoun}</h1>
+        `
+        // console.log(coundoun);
         
-    }, 2000);
+    }, 1000);
+    
+    setTimeout(() => {
+        clearInterval(coundouning);
+        document.querySelector('.close').click()
+    }, 4000);
+    my_modal_1.showModal()
+    document.getElementById(`adopt${some}`).setAttribute('disabled','true')
+    
 }
 
 const detailsModal = async (some) => {
@@ -167,8 +196,6 @@ const detailsModal = async (some) => {
     console.log(data.breed);
 
     modalContainer.innerHTML = `
-    <!-- You can open the modal using ID.showModal() method -->
-
 
 <dialog id="my_modal_4" class="modal">
   <div class="modal-box w-4/5 max-w-5xl">
