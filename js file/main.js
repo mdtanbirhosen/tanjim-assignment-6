@@ -1,13 +1,13 @@
 const petButtonShow = () => {
     fetch(' https://openapi.programming-hero.com/api/peddy/categories')
         .then(res => res.json())
-        .then(data => {
+        .then(data => 
             // const 
             
             showButton(data.categories)
             // workToPetButton(data.categories)
             
-        })
+        )
 }
 
 const showButton = (buttons) => {
