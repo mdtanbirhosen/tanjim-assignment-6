@@ -14,7 +14,7 @@ const showButton = (buttons) => {
 
         petbutton.innerHTML = `
         
-        <button id="${button.id}" onclick="workToPetButton('${button.category} ')" class="flex  items-center rounded-2xl py-6 px-14 border settimeout"><img class="w-14 h-14 "src="${button.category_icon}" alt=""><span class="text-2xl font-bold">${button.category}</span>
+        <button id="${button.id}" onclick="workToPetButton('${button.category}')" class="flex  items-center rounded-2xl py-6 px-14 border settimeout"><img class="w-14 h-14 "src="${button.category_icon}" alt=""><span class="text-2xl font-bold">${button.category}</span>
         </button>
         
         `
@@ -24,45 +24,40 @@ const showButton = (buttons) => {
     });
 }
 petButtonShow()
-const shortbutton = () => {
-    const shortbtn = document.getElementById('short-section');
-    const createshortdiv = document.createElement('div');
-    createshortdiv.innerHTML = `
-    <button class="btn bg-[#0e7a81] text-xl font-bold">Sort by Price</button> 
-    `
-    shortbtn.appendChild(createshortdiv);
-}
-shortbutton()
+
 const workToPetButton = async (category) => {
+    // Remove active class from all buttons first
+    const buttons = document.querySelectorAll('#button-to-all-pet-series button');
+    buttons.forEach(button => {
+        button.classList.remove('bg-[#0e7a81]', 'text-white');
+        button.classList.add('bg-white', 'text-black', );
+    });
+
+    // Add active class to the clicked button
+    const clickedButton = document.querySelector(`#button-to-all-pet-series button[onclick="workToPetButton('${category}')"]`);
+    clickedButton.classList.add('bg-[#0e7a81]', 'text-white','rounded-xl'); // Add a background color and change text color
+    clickedButton.classList.remove('bg-white', 'text-black', ); // Remove default styles if any
+
+    // Fetch the data as before
     const res = await fetch(`https://openapi.programming-hero.com/api/peddy/category/${category}`);
-    
     const datas = await res.json();
     const data = datas.data;
-    // console.log(data);
-    
-    // document.getElementById(`${button.id}`).addEventListener('click',function () {
-    //     console.log('hello');
-        
-    // })
-
-
 
     const cardpet = document.getElementById('card-pet');
-    cardpet.classList.remove('grid','h-[400px]');
-    cardpet.classList.add('my-auto','h-[400px]');
+    cardpet.classList.remove('grid', 'h-[400px]');
+    cardpet.classList.add('my-auto', 'h-[400px]');
     cardpet.innerHTML = `
-    <div class="flex justify-center items-center"><span class="loading loading-bars loading-md"></span></div>
-    `
+        <div class="flex justify-center items-center"><span class="loading loading-bars loading-md"></span></div>
+    `;
     
     setTimeout(() => {
-        cardpet.innerHTML = ""
-        cardpet.classList.add('grid')
-        cardpet.classList.remove('h-[400px]','my-auto')
-        
+        cardpet.innerHTML = "";
+        cardpet.classList.add('grid');
+        cardpet.classList.remove('h-[400px]', 'my-auto');
         showpetAll(data);
     }, 2000);
-
 }
+
 
 
 
@@ -86,6 +81,9 @@ const petAll = () => {
 // }, 2000);
 const showpetAll = (pet) => {
     // console.log(pet);
+    document.getElementById('short-btn').addEventListener('click', () => {shortbutton(pet)
+        
+    })
     const petCardContainer = document.getElementById('card-pet');
     petCardContainer.classList.add('grid')
     petCardContainer.innerHTML = ''
@@ -100,6 +98,7 @@ const showpetAll = (pet) => {
     </div>
         `
     }
+    
     pet.forEach(item => {
         // console.log(item);
 
@@ -113,10 +112,10 @@ const showpetAll = (pet) => {
     </figure>
     <div class="card-body ">
         <h2 class="card-title">${item.pet_name}</h2>
-        <p class="flex items-center"><span><img src="./images/breed.png" alt=""></span>breed: ${item.breed}</p>
-        <p class="flex items-center"><span><img src="./images/birth.png" alt=""></span>birth: ${item.date_of_birth}</p>
-        <p class="flex items-center"><span><img src="./images/gender.png" alt=""></span>gender: ${item.gender}</p>
-        <p class="flex items-center"><span><img src="./images/price.png" alt=""></span>price: ${item.price}</p>
+        <p class="flex items-center"><span><img src="./images/breed.png" alt=""></span>breed: ${item.breed = item.breed? item.breed : 'no data is here'}</p>
+        <p class="flex items-center"><span><img src="./images/birth.png" alt=""></span>birth: ${item.date_of_birth = item.date_of_birth ? item.date_of_birth : 'i dont now'}</p>
+        <p class="flex items-center"><span><img src="./images/gender.png" alt=""></span>gender: ${item.gender = item.gender ? item.gender : 'no data difined'}</p>
+        <p class="flex items-center"><span><img src="./images/price.png" alt=""></span>price: ${item.price === null ? 'no data' : item.price}</p>
         <div class="divider"></div>
         <div class="flex justify-between">
         <button onclick="clickLikeButton(${item.petId})"" class="btn border bg-white rounded-lg"><img src="./images/like.png" alt=""></button>
@@ -127,7 +126,14 @@ const showpetAll = (pet) => {
 </div>
         `
         petCardContainer.appendChild(createpetContant);
+        
+        
     });
+}
+const shortbutton = (pet) => {
+    pet.sort((a,b) => b.price-a.price)
+    showpetAll(pet)
+    
 }
 
 // click like to do something
@@ -177,10 +183,12 @@ const adoptButton = async(some) => {
         // console.log(coundoun);
         
     }, 1000);
+    const adoptbtn = document.getElementById(`adopt${some}`).innerText = 'adopted'
     
     setTimeout(() => {
         clearInterval(coundouning);
         document.querySelector('.close').click()
+        adoptbtn
     }, 4000);
     my_modal_1.showModal()
     document.getElementById(`adopt${some}`).setAttribute('disabled','true')
@@ -203,11 +211,11 @@ const detailsModal = async (some) => {
     <div>
     <div>
         <h3 class="text-2xl font-bold">${data.pet_name}</h3>
-        <p>${data.breed}</p>
-        <p>${data.gender}</p>
-        <p>${data.vaccinated_status}</p>
-        <p>${data.date_of_birth}</p>
-        <p>${data.price}</p>
+        <p>${data.breed = data.breed ? data.breed: 'no data is here'}</p>
+        <p>${data.gender = data.gender ? data.gender : 'this data is not available'}</p>
+        <p>${data.vaccinated_status === 'not' ? 'not available' : data.vaccinated_status}</p>
+        <p>${data.date_of_birth = data.date_of_birth ? data.date_of_birth : 'i dont now'}</p>
+        <p>${data.price === null ? 'not defined' : data.price}</p>
     </div>
     <div class="divider"></div>
     <div>${data.pet_details
